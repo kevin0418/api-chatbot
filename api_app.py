@@ -1,42 +1,19 @@
+import os
 import openai
-import streamlit as st
+ 
+openai.api_key = os.getenv("OPENAI-API-KEY")
+
+print ("OPENAI-API-KEY :", "OPENAI-API-KEY")
+print ("openai.api_key :", openai.api_key)
+
+#from openai import OpenAI
+
 from streamlit_chat import message
+
+response  = openai.Completion.create (
+  model="text-davinci-003",
+  prompt="겨울에 대한 시좀 써줘"  ,
+  max_tokens=150  
+)      
  
-openai.api_key = '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'
- 
-def generate_response(prompt):
-    completions = openai.Completion.create (
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        stop=None,
-        temperature=0,
-        top_p=1,
-    )
- 
-    message = completions["choices"][0]["text"].replace("\n", "")
-    return message
- 
- 
-st.header("🤖Kevin's ChatGPT-3 (Demo)")
-st.subheader("from  호주")
- 
-if 'generated' not in st.session_state:
-    st.session_state['generated'] = []
- 
-if 'past' not in st.session_state:
-    st.session_state['past'] = []
- 
-with st.form('form', clear_on_submit=True):
-    user_input = st.text_input('You: ', '', key='input')
-    submitted = st.form_submit_button('Send or  Enter')
- 
-if submitted and user_input:
-    output = generate_response(user_input)
-    st.session_state.past.append(user_input)
-    st.session_state.generated.append(output)
- 
-if st.session_state['generated']:
-    for i in range(len(st.session_state['generated'])-1, -1, -1):
-        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
-        message(st.session_state["generated"][i], key=str(i))
+print(response.choices[0].text)
